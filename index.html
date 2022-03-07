@@ -6,7 +6,59 @@
 </head>
 
 <body>
+	<h1>Doggo vs Aliens 1.0v</h1>
+	<h3>The Aliens are attacking, save us Astolfo!!</h3> 
+	<script>
+		let cursors;
+		let background;
+		let player_img;
+		let bone_img;
+		let alien_img;
 
+		let game_w = 800;
+		let game_h = 600;
+		let alienOffset_x = 660;
+		let score_txt;
+		let score = 0;
+		let lives_txt;
+		let lives = 3;
+
+		let speed = 2;
+		let alienSpeed = 3;
+		let boneSpeed = 2.5;
+
+		let config = {
+			width: game_w,
+			height: game_h,
+			scene: {
+				preload: preload,
+				create: create,
+				update: update
+			},
+			physics: {
+				default: 'arcade',
+				arcade: {debug: true}
+			}
+		}
+		let game = new Phaser.Game(config);
+
+		function preload() {
+			this.load.image('player','doggo.png');
+			this.load.image('bullet','bone.png');
+			this.load.image('alien','alien.png');
+			this.load.image('background','background.png');
+		}
+		function create() {
+			cursors = this.input.keyboard.createCursorKeys();
+			background = this.add.image(game_w/2,game_h/2,'background');
+		}
+		function update() {
+
+		}
+		function reset() {
+
+		}
+	</script>
 </body>
 
 </html>
