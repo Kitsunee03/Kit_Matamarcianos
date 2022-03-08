@@ -6,18 +6,15 @@
 </head>
 
 <body>
-	<h1>Doggo vs Aliens 1.0v</h1>
-	<h3>The Aliens are attacking, save us Astolfo!!</h3> 
+	<h1>Doggo vs Aliens HD</h1>
+	<h4>The Aliens are attacking, save us Astolfo!!</h4> 
 	<script>
 		let cursors;
-		let background;
-		let player_img;
-		let bone_img;
-		let alien_img;
 
 		let game_w = 800;
 		let game_h = 600;
 		let alienOffset_x = 660;
+
 		let score_txt;
 		let score = 0;
 		let lives_txt;
@@ -25,7 +22,8 @@
 
 		let speed = 2;
 		let alienSpeed = 3;
-		let boneSpeed = 2.5;
+		let bulletSpeed = 2.5;
+		let boneToFire = 0;
 
 		let config = {
 			width: game_w,
@@ -61,13 +59,41 @@
 			bone2_img.setScale(0.15);
 			bone3_img = this.add.image(100, 250, 'bullet');
 			bone3_img.setScale(0.15);
-			player_img = this.add.image(50, game_h/2, 'player');
-			player_img.setScale(0.25);
+			player_img = this.add.image(70, game_h/2, 'player');
+			player_img.setScale(0.2);
+
+			let bones = [bone1_img, bone2_img, bone3_img];
+			for(let i = 0; i < bones.length; i++) {
+				bones[i].setActive(false).setVisible(false);
+			}
+
+			this.add.text(20, 64, "Vidas:");
+			lives_txt = this.add.text(110, 64, lives);
+			this.add.text(game_w-128, 64, "Puntos:");
+			score_txt = this.add.text(game_w-38, 64, score);
 		}
 
 		function update() {
+			//MOVEMENT
+			if(cursors.up.isDown && cursors.down.isUp && player_img.y >= 30) {
+				player_img.y -= speed;
+				player_img.rotation = -170;
+			}
+			if(cursors.up.isUp && cursors.down.isDown && player_img.y <= game_h - 30){
+				player_img.y += speed;
+				player_img.rotation = 170;
+			}
+			if(cursors.up.isUp && cursors.down.isUp) {
+				player_img.rotation = 0;
+			}
+
+			//FIRE
 
 		}
+		function fire() {
+			//bones[boneToFire].setActive(true).setVisible(true);
+			console.log("shooting");
+		}	
 		function reset() {
 
 		}
