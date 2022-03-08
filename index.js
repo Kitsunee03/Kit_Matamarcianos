@@ -1,11 +1,11 @@
 #!/usr/bin/node
 
-let http = require("http");
-let fs = require("fs");
-let archivo =require('./images.json');
+let http = 		require("http");
+let fs = 		require("fs");
+let archivo =	require('./images.json');
 
 let http_server = http.createServer(function(req,res) {
-	for(let i=0; i < archivo.images.length; i++){
+	for(let i = 0; i < archivo.images.length; i++){
 		if (req.url == "/" + archivo.images[i]){
 			fs.readFile(archivo.images[i], function(err, data) {
 				if (err) {
@@ -26,3 +26,5 @@ let http_server = http.createServer(function(req,res) {
 		res.end(data);
 	});
 }).listen(1095);
+
+console.log('Server running :)');

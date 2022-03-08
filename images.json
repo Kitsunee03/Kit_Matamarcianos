@@ -1,8 +1,8 @@
 {
 	"images":[
-		"background.png",
-		"doggo.png",
-		"bone.png",
-		"alien.png"
+		"player.png",
+		"bullet.png",
+		"alien.png",
+		"background.png"
 	]
 }
