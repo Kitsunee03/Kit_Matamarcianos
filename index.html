@@ -48,17 +48,23 @@
 			this.load.image('alien','alien.png');
 			this.load.image('background','background.png');
 		}
+
 		function create() {
 			cursors = this.input.keyboard.createCursorKeys();
 			background = this.add.image(game_w/2,game_h/2,'background');
 
 			alien_img = this.add.image(600, 250,'alien');
-			alien_img.setScale(0.4);
-			bone1_img = this.add.image(100, 650, 'bone');
-			bone1_img = this.add.image(100, 650, 'bone');
-			bone1_img = this.add.image(100, 650, 'bone');
+			alien_img.setScale(0.3);
+			bone1_img = this.add.image(100,	450, 'bullet');
+			bone1_img.setScale(0.15);
+			bone2_img = this.add.image(100, 350, 'bullet');
+			bone2_img.setScale(0.15);
+			bone3_img = this.add.image(100, 250, 'bullet');
+			bone3_img.setScale(0.15);
 			player_img = this.add.image(50, game_h/2, 'player');
+			player_img.setScale(0.25);
 		}
+
 		function update() {
 
 		}
