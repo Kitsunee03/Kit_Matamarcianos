@@ -19,7 +19,6 @@ let http_server = http.createServer(function(req,res) {
 	for(let i = 0; i < archivo.images.length; i++){
 		if (req.url == "/" + archivo.images[i]){
 			fs.readFile(archivo.images[i], function(err, data) {
-				console.log(archivo.images[i]);
 				if (err) {
 					console.log("Error1");
 					return;
@@ -32,3 +31,4 @@ let http_server = http.createServer(function(req,res) {
 
 	console.log("Server running :)");
 }).listen(1095);
+console.log("<-------------------------->");

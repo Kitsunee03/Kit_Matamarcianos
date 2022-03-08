@@ -24,6 +24,7 @@
 		let alienSpeed = 3;
 		let bulletSpeed = 2.5;
 		let boneToFire = 0;
+		let boneCooldown = 0;
 
 		let config = {
 			width: game_w,
@@ -88,11 +89,16 @@
 			}
 
 			//FIRE
-
+			if(cursors.space.isDown && game.time > boneCooldown) {
+				console.log("redi tu shut");
+				fire();
+			}
 		}
 		function fire() {
-			//bones[boneToFire].setActive(true).setVisible(true);
-			console.log("shooting");
+			bones[boneToFire].reset(player_img.x, player_img.y);
+			bones[boneToFire].setActive(true).setVisible(true);
+			boneToFire++; if(boneToFire == 3){boneToFire = 0;}
+			console.log("shutinc");
 		}	
 		function reset() {
 
