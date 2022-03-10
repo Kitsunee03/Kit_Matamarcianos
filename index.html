@@ -9,23 +9,24 @@
 	<h1>Doggo vs Aliens HD</h1>
 	<h4>The Aliens are attacking, save us Astolfo!!</h4> 
 	<script>
+		//GameVars
 		let cursors;
-
 		let game_w = 800;
 		let game_h = 600;
 		let alienOffset_x = 660;
-
 		let score_txt;
 		let score = 0;
 		let lives_txt;
 		let lives = 3;
-
+		//BoneVars
+		let bone1_img, bone2_img, bone3_img;
+		let bones;
 		let speed = 2;
 		let alienSpeed = 3;
-		let bulletSpeed = 2.5;
+		let boneSpeed = 5;
 		let boneToFire = 0;
-		let boneCooldown = 0;
-
+		let hasShooted = false;
+		//GameConfig
 		let config = {
 			width: game_w,
 			height: game_h,
@@ -62,8 +63,8 @@
 			bone3_img.setScale(0.15);
 			player_img = this.add.image(70, game_h/2, 'player');
 			player_img.setScale(0.2);
-
-			let bones = [bone1_img, bone2_img, bone3_img];
+			
+			bones = [bone1_img, bone2_img, bone3_img];
 			for(let i = 0; i < bones.length; i++) {
 				bones[i].setActive(false).setVisible(false);
 			}
@@ -75,7 +76,7 @@
 		}
 
 		function update() {
-			//MOVEMENT
+			//PLAYER UPDATE
 			if(cursors.up.isDown && cursors.down.isUp && player_img.y >= 30) {
 				player_img.y -= speed;
 				player_img.rotation = -170;
@@ -89,13 +90,22 @@
 			}
 
 			//FIRE
-			if(cursors.space.isDown && game.time > boneCooldown) {
-				console.log("redi tu shut");
-				fire();
+			cursors.space.on('down', function(event){
+				if(!hasShooted){ fire(); }
+				hasShooted = true;
+			});
+			cursors.space.on('up', function(event){
+				hasShooted = false;
+			});
+			//BONE UPDATE
+			for(let i = 0; i < bones.length; i++) {
+			bones[i].x += boneSpeed;
 			}
 		}
-		function fire() {
-			bones[boneToFire].reset(player_img.x, player_img.y);
+		function fire(){ 
+			bones[boneToFire].x = player_img.x;
+			bones[boneToFire].y = player_img.y;
+
 			bones[boneToFire].setActive(true).setVisible(true);
 			boneToFire++; if(boneToFire == 3){boneToFire = 0;}
 			console.log("shutinc");
