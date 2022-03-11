@@ -13,6 +13,7 @@
 		let cursors;
 		let game_w = 800;
 		let game_h = 600;
+		let bgSpeed = 2;
 		let alienOffset_x = 660;
 		let score_txt;
 		let score = 0;
@@ -26,6 +27,9 @@
 		let boneSpeed = 5;
 		let boneToFire = 0;
 		let hasShooted = false;
+		//AlienVars
+		let alien1_img, alien2_img, alien3_img, alien4_img;
+		let aliens;
 		//GameConfig
 		let config = {
 			width: game_w,
@@ -50,33 +54,53 @@
 		}
 
 		function create() {
+			//Create Managers
 			cursors = this.input.keyboard.createCursorKeys();
-			background = this.add.image(game_w/2,game_h/2,'background');
-			background.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
-
-			alien1_img = this.add.image(600, 250,'alien');
-			alien1_img.setScale(0.3);
-			alien1_img.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
-			bone1_img = this.add.image(100,	450, 'bullet');
-			bone2_img = this.add.image(100, 350, 'bullet');
-			bone3_img = this.add.image(100, 250, 'bullet');
-			player_img = this.add.image(70, game_h/2, 'player');
-			player_img.setScale(0.2);
-			
-			bones = [bone1_img, bone2_img, bone3_img];
-			for(let i = 0; i < bones.length; i++) {
-				bones[i].setScale(0.15);
-				bones[i].texture.setFilter(Phaser.Textures.FilterMode.NEAREST)
-				bones[i].setActive(false).setVisible(false);
-			}
+			bg1 = this.add.image(game_w/2,game_h/2,'background');
+			bg2 = this.add.image(game_w+game_w/2,game_h/2,'background');
+			bg1.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+			bg2.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
 
 			this.add.text(20, 64, "Vidas:");
 			lives_txt = this.add.text(110, 64, lives);
 			this.add.text(game_w-128, 64, "Puntos:");
 			score_txt = this.add.text(game_w-38, 64, score);
+			
+			//Create Aliens
+			alien1_img = this.add.image(800, 250,'alien');
+			alien2_img = this.add.image(810, 300,'alien');
+			alien3_img = this.add.image(800, 350,'alien');
+			alien4_img = this.add.image(820, 400,'alien');
+			aliens = [alien1_img, alien2_img, alien3_img, alien4_img];
+			for(let i = 0; i < aliens.length; i++) {
+				aliens[i].setScale(0.3);
+				aliens[i].texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+			}
+
+			//Create Bones
+			bone1_img = this.add.image(100,	450, 'bullet');
+			bone2_img = this.add.image(100, 350, 'bullet');
+			bone3_img = this.add.image(100, 250, 'bullet');
+			bones = [bone1_img, bone2_img, bone3_img];
+			for(let i = 0; i < bones.length; i++) {
+			    bones[i].setScale(0.15);
+				bones[i].texture.setFilter(Phaser.Textures.FilterMode.NEAREST)
+				bones[i].setActive(false).setVisible(false);
+			}
+
+			//Create Doggo
+			player_img = this.add.image(70, game_h/2, 'player');
+			player_img.setScale(0.2);
+			player_img.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
 		}
 
 		function update() {
+			//Parallax
+			bg1.x -= bgSpeed;
+			bg2.x -= bgSpeed;
+			if(bg1.x <= -game_w/2){bg1.x = game_w+game_w/2;}
+			if(bg2.x <= -game_w/2){bg2.x = game_w+game_w/2;}
+		
 			//PLAYER UPDATE
 			if(cursors.up.isDown && cursors.down.isUp && player_img.y >= 30) {
 				player_img.y -= speed;
