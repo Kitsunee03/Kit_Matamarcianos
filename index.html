@@ -13,7 +13,7 @@
 		let cursors;
 		let game_w = 800;
 		let game_h = 600;
-		let bgSpeed = 2;
+		let bgSpeed = 1;
 		let alienOffset_x = 660;
 		let score_txt;
 		let score = 0;
@@ -23,12 +23,12 @@
 		let bone1_img, bone2_img, bone3_img;
 		let bones;
 		let speed = 2;
-		let alienSpeed = 1.5;
-		let boneSpeed = 5;
+		let alienSpeed = 0.5;
+		let boneSpeed = 2;
 		let boneToFire = 0;
 		let hasShooted = false;
 		//AlienVars
-		let alien1_img, alien2_img, alien3_img, alien4_img;
+		let alien1_img, alien2_img, alien3_img, alien4_img, alien5_img;
 		let aliens;
 		//GameConfig
 		let config = {
@@ -71,68 +71,84 @@
 			alien2_img = this.add.image(960, 350,'alien');
 			alien3_img = this.add.image(910, 470,'alien');
 			alien4_img = this.add.image(990, 530,'alien');
-			aliens = [alien1_img, alien2_img, alien3_img, alien4_img];
+			alien5_img = this.add.image(880, 580,'alien');
+			aliens = [alien1_img, alien2_img, alien3_img, alien4_img, alien5_img];
 			for(let i = 0; i < aliens.length; i++) {
 				aliens[i].setScale(0.3);
 				aliens[i].texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+				this.physics.add.existing(aliens[i], false);
 			}
 
 			//Create Bones
-			bone1_img = this.add.image(100,	450, 'bullet');
-			bone2_img = this.add.image(100, 350, 'bullet');
-			bone3_img = this.add.image(100, 250, 'bullet');
+			bone1_img = this.add.image(1000, 450, 'bullet');
+			bone2_img = this.add.image(1000, 350, 'bullet');
+			bone3_img = this.add.image(1000, 250, 'bullet');
 			bones = [bone1_img, bone2_img, bone3_img];
 			for(let i = 0; i < bones.length; i++) {
 			    bones[i].setScale(0.15);
 				bones[i].texture.setFilter(Phaser.Textures.FilterMode.NEAREST)
 				bones[i].setActive(false).setVisible(false);
+				this.physics.add.existing(bones[i], false);
 			}
 
 			//Create Doggo
 			player_img = this.add.image(70, game_h/2, 'player');
 			player_img.setScale(0.2);
 			player_img.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+			this.physics.add.existing(player_img, false);
+			for (let i = 0; i < aliens.length; i++) {
+				this.physics.add.collider(player_img, aliens[i], function (player, alien){
+					lives--;
+					lives_txt.text = lives.toString();
+					reset();
+				});
+			}
 		}
 
 		function update() {
-			//Parallax
-			bg1.x -= bgSpeed;
-			bg2.x -= bgSpeed;
-			if(bg1.x <= -game_w/2){bg1.x = game_w+game_w/2;}
-			if(bg2.x <= -game_w/2){bg2.x = game_w+game_w/2;}
+			if(lives < 0) {
+				//Parallax
+				bg1.x -= bgSpeed;
+				bg2.x -= bgSpeed;
+				if(bg1.x <= -game_w/2){bg1.x = game_w+game_w/2;}
+				if(bg2.x <= -game_w/2){bg2.x = game_w+game_w/2;}
 		
-			//PLAYER UPDATE
-			if(cursors.up.isDown && cursors.down.isUp && player_img.y >= 30) {
-				player_img.y -= speed;
-				player_img.rotation = -170;
-			}
-			if(cursors.up.isUp && cursors.down.isDown && player_img.y <= game_h - 30){
-				player_img.y += speed;
-				player_img.rotation = 170;
-			}
-			if(cursors.up.isUp && cursors.down.isUp) {
-				player_img.rotation = 0;
-			}
+				//PLAYER UPDATE
+				if(cursors.up.isDown && cursors.down.isUp && player_img.y >= 30) {
+					player_img.y -= speed;
+					player_img.rotation = -170;
+				}
+				if(cursors.up.isUp && cursors.down.isDown && player_img.y <= game_h - 30){
+					player_img.y += speed;
+					player_img.rotation = 170;
+				}
+				if(cursors.up.isUp && cursors.down.isUp) {
+					player_img.rotation = 0;
+				}
 
-			//FIRE
-			cursors.space.on('down', function(event){
-				if(!hasShooted){ fire(); }
-				hasShooted = true;
-			});
-			cursors.space.on('up', function(event){
-				hasShooted = false;
-			});
-			//BONE UPDATE
-			for(let i = 0; i < bones.length; i++) {
-				bones[i].x += boneSpeed;
-				if(bones[i].x > game_w){
-					 bones[i].setActive(false).setVisible(false);
+				//FIRE
+				cursors.space.on('down', function(event){
+					if(!hasShooted){ fire(); }
+					hasShooted = true;
+				});
+				cursors.space.on('up', function(event){
+					hasShooted = false;
+				});
+				//BONE UPDATE
+				for(let i = 0; i < bones.length; i++) {
+					bones[i].x += boneSpeed;
+					if(bones[i].x > game_w){
+						bones[i].setActive(false).setVisible(false);
+					}
+				}
+				//ALIEN UPDATE
+				for (let i = 0; i < aliens.length; i++) {
+					aliens[i].x -= alienSpeed;
+					if (aliens[i].x < 0){respawn(aliens[i]);}
 				}
 			}
-			//ALIEN UPDATE
-			for (let i = 0; i < aliens.length; i++) {
-				aliens[i].x -= alienSpeed;
-				if (aliens[i].x < 0){respawn(aliens[i]);}
+			else {
+				this.add.text(game_w/2, game_h/2, "GAME OVER");
 			}
 		}
 		function fire(){ 
@@ -144,7 +160,10 @@
 			console.log("shutinc");
 		}	
 		function reset() {
-			
+			for (let i = 0; i < aliens.length; i++) {
+				respawn(aliens[i]);
+			}
+			 player_img.x = 70; player_img.y = game_h/2;
 		}
 		function respawn(alien) {
 			alien.x = Math.floor(Math.random()*600) + game_w;
