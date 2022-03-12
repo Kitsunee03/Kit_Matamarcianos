@@ -10,34 +10,35 @@
 	<h4>The Aliens are attacking, save us Astolfo!!</h4> 
 	<script>
 		//GameVars
-		let cursors;
-		let game_w = 800;
-		let game_h = 600;
-		let bgSpeed = 1;
-		let score_txt;
-		let scoreValue;
-		let score = 0;
-		let lives_txt;
-		let livesValue;
-		let lives = 1;
-		let gameOver_txt;
+			let cursors;
+			let game_w = 800;
+			let game_h = 600;
+			let bgSpeed = 1;
+			let score_txt;
+			let scoreValue;
+			let score = 0;
+			let lives_txt;
+			let livesValue;
+			let gameOver_txt;
+		//DoggoVars
+			let lives = 3;
+			let speed = 2;
+			let hasShooted = false;
 		//BoneVars
-		let bone1_img, bone2_img, bone3_img;
-		let bones;
-		let speed = 2;
-		let alienSpeed = 0.5;
-		let boneSpeed = 2;
-		let boneToFire = 0;
-		let hasShooted = false;
+			let bone1_img, bone2_img, bone3_img;
+			let bones;
+			let boneSpeed = 2;
+			let boneToFire = 0;
 		//AlienVars
-		let alien1_img, alien2_img, alien3_img, alien4_img, alien5_img;
-		let aliens;
+			let aliens;
+			let alien1_img, alien2_img, alien3_img, alien4_img, alien5_img;
+			let alienSpeed = 0.5;
 		//GameConfig
 		let config = {
 			width: game_w,
 			height: game_h,
 			scene: {
-				preload: preload,
+				preload: prelo69,
 				create: create,
 				update: update
 			},
@@ -63,18 +64,19 @@
 			bg1.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
 			bg2.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
 
-			lives_txt = this.add.text(20, 64, "Vidas:");
-			livesValue = this.add.text(110, 64, lives);
-			score_txt = this.add.text(game_w-128, 64, "Puntos:");
-			scoreValue = this.add.text(game_w-38, 64, score);
-			gameOver_txt = this.add.text(game_w/4, game_h/2,'Game Over', {
-				fontFamily: 'Play',
-				fontSize: '80px',
-				color: '#CD3636',
-				fontStyle: 'normal',
-				strokeThickness: 7,
-				stroke: '#36454F'
-			});
+			lives_txt = this.add.text(20, 32, "Vidas:", {
+				fontFamily: 'Play', fontSize: '32px', fontStyle: 'normal',
+				strokeThickness: 2,	stroke: '#000'});
+			livesValue = this.add.text(150, 37, lives, {
+				fontSize: '32px',strokeThickness: 2, stroke: '#000'});
+			score_txt = this.add.text(20, 64, "Puntos:", {
+				fontFamily: 'Play', fontSize: '32px', fontStyle: 'normal',
+				strokeThickness: 2,	stroke: '#000'});
+			scoreValue = this.add.text(150, 69, score, {
+				fontSize: '32px',strokeThickness: 2, stroke: '#000'});
+			gameOver_txt = this.add.text(game_w/4, game_h/2,"Game Over", {
+				fontFamily: 'Play',	fontSize: '80px', color: '#CD3636',
+				fontStyle: 'normal', strokeThickness: 7, stroke: '#000'});
 			gameOver_txt.setVisible(false);
 			
 			//Create Aliens
@@ -98,7 +100,6 @@
 			for(let i = 0; i < bones.length; i++) {
 			    bones[i].setScale(0.15);
 				bones[i].texture.setFilter(Phaser.Textures.FilterMode.NEAREST)
-				bones[i].setActive(false).setVisible(false);
 				this.physics.add.existing(bones[i], false);
 			}
 
@@ -107,17 +108,28 @@
 			player_img.setScale(0.2);
 			player_img.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
 			this.physics.add.existing(player_img, false);
+			
+			//COLLISIONS
 			for (let i = 0; i < aliens.length; i++) {
 				this.physics.add.collider(player_img, aliens[i], function (player, alien){
 					lives--;
-					livesValue.text = lives.toString();
 					reset();
 				});
+				for(let j=0; j<bones.length;j++){
+					this.physics.add.collider(bones[j], aliens[i], function (bone, alien){
+					score++;
+					respawn(aliens[i]);
+					alienSpeed += 0.05;
+					bones[j].y = 700;
+					});
+				}
 			}
 		}
 
 		function update() {
 			if(lives > 0) {
+				livesValue.text = lives.toString();
+				scoreValue.text = score.toString();
 				//Parallax
 				bg1.x -= bgSpeed;
 				bg2.x -= bgSpeed;
@@ -149,24 +161,24 @@
 				for(let i = 0; i < bones.length; i++) {
 					bones[i].x += boneSpeed;
 					if(bones[i].x > game_w){
-						bones[i].setActive(false).setVisible(false);
+						bones[i].y = 700;
 					}
 				}
 				//ALIEN UPDATE
 				for (let i = 0; i < aliens.length; i++) {
 					aliens[i].x -= alienSpeed;
-					if (aliens[i].x < 0){respawn(aliens[i]);}
+					if (aliens[i].x < 0){respawn(aliens[i]); lives--;}
 				}
 			}
 			else {
 				gameOver();
 			}
 		}
+
 		function fire(){ 
 			bones[boneToFire].x = player_img.x+50;
 			bones[boneToFire].y = player_img.y;
 
-			bones[boneToFire].setActive(true).setVisible(true);
 			boneToFire++; if(boneToFire == 3){boneToFire = 0;}
 			console.log("shutinc");
 		}	
@@ -175,6 +187,7 @@
 				respawn(aliens[i]);
 			}
 			 player_img.x = 70; player_img.y = game_h/2;
+			 alienSpeed = 0.7;
 		}
 		function respawn(alien) {
 			alien.x = Math.floor(Math.random()*600) + game_w;
@@ -182,15 +195,18 @@
 		}
 		function gameOver() {
 			gameOver_txt.setVisible(true);
+			score_txt.x = game_w/2 - 90; scoreValue.x = game_w/2 + 60;
+			score_txt.y = 400; scoreValue.y = 405;
 			for(let i = 0; i < bones.length; i++) {
-				bones[i].setActive(false).setVisible(false);
+				bones[i].x = 1000;
 			}
 			for(let i = 0; i < aliens.length; i++) {
 				aliens[i].setActive(false).setVisible(false);
+				aliens[i].x = 1000;
 			}
-			score_txt.setVisible(false);scoreValue.setVisible(false);
 			lives_txt.setVisible(false);livesValue.setVisible(false);
 			player_img.setActive(false).setVisible(false);
+			player_img.x = 1000;
 		}
 	</script>
 </body>
