@@ -14,11 +14,13 @@
 		let game_w = 800;
 		let game_h = 600;
 		let bgSpeed = 1;
-		let alienOffset_x = 660;
 		let score_txt;
+		let scoreValue;
 		let score = 0;
 		let lives_txt;
-		let lives = 3;
+		let livesValue;
+		let lives = 1;
+		let gameOver_txt;
 		//BoneVars
 		let bone1_img, bone2_img, bone3_img;
 		let bones;
@@ -61,10 +63,19 @@
 			bg1.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
 			bg2.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
 
-			this.add.text(20, 64, "Vidas:");
-			lives_txt = this.add.text(110, 64, lives);
-			this.add.text(game_w-128, 64, "Puntos:");
-			score_txt = this.add.text(game_w-38, 64, score);
+			lives_txt = this.add.text(20, 64, "Vidas:");
+			livesValue = this.add.text(110, 64, lives);
+			score_txt = this.add.text(game_w-128, 64, "Puntos:");
+			scoreValue = this.add.text(game_w-38, 64, score);
+			gameOver_txt = this.add.text(game_w/4, game_h/2,'Game Over', {
+				fontFamily: 'Play',
+				fontSize: '80px',
+				color: '#CD3636',
+				fontStyle: 'normal',
+				strokeThickness: 7,
+				stroke: '#36454F'
+			});
+			gameOver_txt.setVisible(false);
 			
 			//Create Aliens
 			alien1_img = this.add.image(900, 150,'alien');
@@ -99,14 +110,14 @@
 			for (let i = 0; i < aliens.length; i++) {
 				this.physics.add.collider(player_img, aliens[i], function (player, alien){
 					lives--;
-					lives_txt.text = lives.toString();
+					livesValue.text = lives.toString();
 					reset();
 				});
 			}
 		}
 
 		function update() {
-			if(lives < 0) {
+			if(lives > 0) {
 				//Parallax
 				bg1.x -= bgSpeed;
 				bg2.x -= bgSpeed;
@@ -148,7 +159,7 @@
 				}
 			}
 			else {
-				this.add.text(game_w/2, game_h/2, "GAME OVER");
+				gameOver();
 			}
 		}
 		function fire(){ 
@@ -168,6 +179,18 @@
 		function respawn(alien) {
 			alien.x = Math.floor(Math.random()*600) + game_w;
 			alien.y = Math.floor(Math.random()*600);
+		}
+		function gameOver() {
+			gameOver_txt.setVisible(true);
+			for(let i = 0; i < bones.length; i++) {
+				bones[i].setActive(false).setVisible(false);
+			}
+			for(let i = 0; i < aliens.length; i++) {
+				aliens[i].setActive(false).setVisible(false);
+			}
+			score_txt.setVisible(false);scoreValue.setVisible(false);
+			lives_txt.setVisible(false);livesValue.setVisible(false);
+			player_img.setActive(false).setVisible(false);
 		}
 	</script>
 </body>
