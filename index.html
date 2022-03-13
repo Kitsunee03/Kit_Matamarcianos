@@ -38,7 +38,7 @@
 			width: game_w,
 			height: game_h,
 			scene: {
-				preload: prelo69,
+				preload: preload,
 				create: create,
 				update: update
 			},
@@ -179,7 +179,7 @@
 			bones[boneToFire].x = player_img.x+50;
 			bones[boneToFire].y = player_img.y;
 
-			boneToFire++; if(boneToFire == 3){boneToFire = 0;}
+			boneToFire++; if(boneToFire == bones.length){boneToFire = 0;}
 			console.log("shutinc");
 		}	
 		function reset() {
